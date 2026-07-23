@@ -10,6 +10,8 @@ import sys
 from ledpi import __version__
 from ledpi.config import ConfigError, load_config
 from ledpi.media import ScanReport, process_inbox
+from ledpi.playback import PlaybackSummary, play_playlist
+from ledpi.render import FakeRenderer
 
 
 COMMANDS = ("scan", "run", "test-pattern", "doctor")
@@ -48,7 +50,24 @@ def build_parser() -> argparse.ArgumentParser:
     )
     scan_parser.set_defaults(handler=_scan)
 
-    for command in ("run", "test-pattern", "doctor"):
+    run_parser = subparsers.add_parser(
+        "run",
+        parents=[config_parent],
+        help="run command",
+    )
+    run_parser.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="Use an in-memory renderer instead of hardware.",
+    )
+    run_parser.add_argument(
+        "--once",
+        action="store_true",
+        help="Play one loop and exit.",
+    )
+    run_parser.set_defaults(handler=_run)
+
+    for command in ("test-pattern", "doctor"):
         subparser = subparsers.add_parser(
             command,
             parents=[config_parent],
@@ -69,6 +88,32 @@ def _scan(args: argparse.Namespace) -> int:
     report = process_inbox(config, dry_run=args.dry_run or config.runtime.dry_run)
     _print_scan_report(report)
     return 1 if report.has_errors else 0
+
+
+def _run(args: argparse.Namespace) -> int:
+    try:
+        config = load_config(args.config)
+    except ConfigError as exc:
+        print(f"config error: {exc}", file=sys.stderr)
+        return 1
+
+    dry_run = args.dry_run or config.runtime.dry_run
+    if not dry_run:
+        print(
+            "hardware renderer is not implemented yet; use --dry-run",
+            file=sys.stderr,
+        )
+        return 2
+
+    renderer = FakeRenderer()
+    summary = play_playlist(
+        config,
+        renderer,
+        once=args.once,
+        sleep=lambda _seconds: None,
+    )
+    _print_playback_summary(summary)
+    return 0
 
 
 def _not_implemented(args: argparse.Namespace) -> int:
@@ -93,6 +138,16 @@ def _print_scan_report(report: ScanReport) -> None:
         )
     )
     print(f"Summary: {summary}")
+
+
+def _print_playback_summary(summary: PlaybackSummary) -> None:
+    fallback = str(summary.used_fallback).lower()
+    print(
+        "Playback complete: "
+        f"items={summary.items_played} "
+        f"frames={summary.frames_shown} "
+        f"fallback={fallback}",
+    )
 
 
 def main(argv: Sequence[str] | None = None) -> int:

@@ -44,6 +44,12 @@ Preview local media processing without writing output:
 python -m ledpi.service scan --dry-run
 ```
 
+Run one dry-run playback loop without LED hardware:
+
+```bash
+python -m ledpi.service run --dry-run --once
+```
+
 ## Configuration
 
 The app uses TOML configuration. Start from the example file:
