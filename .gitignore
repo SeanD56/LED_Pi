@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+build/
+dist/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Local appliance config
+config.local.toml
+*.local.toml
+
+# User media and generated playback assets
+media/inbox/*
+!media/inbox/.gitkeep
+media/processed/*
+!media/processed/.gitkeep
