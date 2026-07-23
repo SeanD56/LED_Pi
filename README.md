@@ -38,6 +38,12 @@ python -m ledpi.service --help
 ledpi --help
 ```
 
+Preview local media processing without writing output:
+
+```bash
+python -m ledpi.service scan --dry-run
+```
+
 ## Configuration
 
 The app uses TOML configuration. Start from the example file:
@@ -70,10 +76,10 @@ User media and generated assets are ignored by git. The `.gitkeep` files only pr
 Use Raspberry Pi Imager to flash the SD card:
 
 - Device: Raspberry Pi 5
-- OS: Raspberry Pi OS Lite (64-bit)
+- OS: Raspberry Pi OS Lite (64-bit), or Raspberry Pi OS (64-bit) if you want a desktop available
 - Storage: the target microSD card
 
-Use the customization step to configure hostname, user, password, Wi-Fi, locale, timezone, and SSH. A stable hostname such as `ledpi.local` makes later SSH access easier on networks that support mDNS.
+Use the customization step to configure hostname, user, password, Wi-Fi, locale, timezone, and SSH. A stable hostname such as `ledpi.local` makes later SSH access easier on networks that support mDNS. The project is designed for CLI/systemd operation either way; the desktop-capable image is fine as long as display testing is done without other heavy workloads running.
 
 After first boot, SSH in and update the system:
 

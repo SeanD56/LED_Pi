@@ -24,8 +24,39 @@ def test_cli_version_exits_successfully(capsys):
     assert __version__ in captured.out
 
 
+def test_scan_dry_run_exits_successfully_with_empty_inbox(tmp_path, capsys):
+    config_path = tmp_path / "ledpi.toml"
+    inbox = tmp_path / "inbox"
+    inbox.mkdir()
+    config_path.write_text(
+        """
+        [media]
+        inbox = "inbox"
+        processed = "processed"
+        """,
+        encoding="utf-8",
+    )
+
+    exit_code = main(["scan", "--config", str(config_path), "--dry-run"])
+
+    captured = capsys.readouterr()
+    assert exit_code == 0
+    assert "No media found." in captured.out
+
+
+def test_scan_invalid_config_returns_error(tmp_path, capsys):
+    config_path = tmp_path / "ledpi.toml"
+    config_path.write_text("[panel]\nwidth = 0\n", encoding="utf-8")
+
+    exit_code = main(["scan", "--config", str(config_path), "--dry-run"])
+
+    captured = capsys.readouterr()
+    assert exit_code == 1
+    assert "panel.width" in captured.err
+
+
 def test_placeholder_commands_are_explicit(capsys):
-    exit_code = main(["scan"])
+    exit_code = main(["run"])
 
     captured = capsys.readouterr()
     assert exit_code == 2

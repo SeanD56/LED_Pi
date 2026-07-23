@@ -8,7 +8,7 @@ version = "0.1.0"
 description = "Raspberry Pi 5 LED matrix appliance for local media playback."
 readme = "README.md"
 requires-python = ">=3.11"
-dependencies = []
+dependencies = ["Pillow>=10"]
 
 [project.optional-dependencies]
 test = ["pytest>=8"]
@@ -19,3 +19,6 @@ ledpi = "ledpi.service.cli:main"
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["."]
+
+[tool.setuptools.packages.find]
+include = ["ledpi*"]
