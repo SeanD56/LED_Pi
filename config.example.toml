@@ -1,0 +1,19 @@
+[panel]
+width = 64
+height = 64
+address_lines = 5
+brightness = 0.25
+
+[media]
+inbox = "media/inbox"
+processed = "media/processed"
+
+[playback]
+image_duration_seconds = 8.0
+order = "deterministic"
+
+[processing]
+fit = "cover"
+
+[runtime]
+dry_run = false
